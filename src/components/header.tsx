@@ -1,4 +1,11 @@
 import { Button } from "@/components/ui/button";
+import {
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from "@clerk/nextjs";
 import { Gamepad2 } from "lucide-react";
 
 export default function Header() {
@@ -16,7 +23,18 @@ export default function Header() {
               <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Features</a>
               <a href="#how-it-works" className="text-sm text-muted-foreground hover:text-foreground transition-colors">How It Works</a>
               <a href="#pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Pricing</a>
-              <Button size="sm">Start Analyzing</Button>
+              <SignedOut>
+                <SignInButton>
+                  <Button variant="ghost" size="sm">Sign In</Button>
+                </SignInButton>
+                <SignUpButton>
+                  <Button size="sm">Start Analyzing</Button>
+                </SignUpButton>
+              </SignedOut>
+              <SignedIn>
+                <Button size="sm">Upload Gameplay</Button>
+                <UserButton />
+              </SignedIn>
             </div>
           </nav>
         </div>

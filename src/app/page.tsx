@@ -1,7 +1,8 @@
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Gamepad2, Brain, TrendingUp, Target, BarChart3, Play } from "lucide-react";
+import { SignUpButton, SignedIn, SignedOut } from "@clerk/nextjs";
+import { ArrowRight, BarChart3, Brain, Gamepad2, Play, Target, TrendingUp } from "lucide-react";
 
 export default function Home() {
   return (
@@ -22,10 +23,20 @@ export default function Home() {
             Discover your strengths, identify weaknesses, and climb the ranks faster than ever.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="group">
-              Upload Your Gameplay
-              <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-            </Button>
+            <SignedOut>
+              <SignUpButton>
+                <Button size="lg" className="group">
+                  Upload Your Gameplay
+                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </SignUpButton>
+            </SignedOut>
+            <SignedIn>
+              <Button size="lg" className="group">
+                Upload Your Gameplay
+                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </SignedIn>
             <Button variant="outline" size="lg">
               <Play className="mr-2 h-4 w-4" />
               Watch Demo
