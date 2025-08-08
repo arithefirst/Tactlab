@@ -57,6 +57,9 @@ export async function uploadToTwelvelabs(objId: string): Promise<TasksCreateResp
   const tempPath = join(tmpdir(), `temp-${objId}`);
 
   try {
+    // TO-DO
+    // make an api endpoint that wraps around a presignedGetURL and expose it
+    // so that we can upload to TL via a URL instead of a file buffer
     await pipeline(objStream, fs.createWriteStream(tempPath));
     const readStream = fs.createReadStream(tempPath);
 
