@@ -3,6 +3,30 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@keyframes jump-shaking {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateY(-4px);
+  }
+  35% {
+    transform: translateY(-4px) rotate(5deg);
+  }
+  55% {
+    transform: translateY(-4px) rotate(-5deg);
+  }
+  65% {
+    transform: translateY(-4px) rotate(5deg);
+  }
+  75% {
+    transform: translateY(-4px) rotate(-5deg);
+  }
+  100% {
+    transform: translateY(0) rotate(0);
+  }
+}
+
 :root {
   --background: oklch(95.31% 0.0496 169.04);
   --secondary-background: oklch(100% 0 0);
@@ -20,7 +44,7 @@
   --chart-5: #0099ff;
   --chart-active-dot: #000;
 
-  --noheader-screenheight: calc(100vh - 65px);
+  --noheader-screenheight: calc(100vh - 69px);
 }
 
 .dark {
@@ -77,5 +101,12 @@
   h5,
   h6 {
     @apply font-heading;
+  }
+}
+
+@layer utilities {
+  .animate-tilt-twice {
+    animation: jump-shaking 0.6s ease-in-out 1;
+    animation-fill-mode: forwards;
   }
 }

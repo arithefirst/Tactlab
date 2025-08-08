@@ -6,7 +6,7 @@ import { Trash2, Upload, Video } from 'lucide-react';
 import React, { useRef, useState } from 'react';
 
 interface VideoUploadCardProps {
-  onSubmit?: (file: File) => void;
+  onSubmit?: (file: File, reset: () => void) => void;
   maxFileSize?: number; // in bytes
   className?: string;
 }
@@ -118,7 +118,11 @@ export function VideoUploadCard({
                     e.stopPropagation();
                     if (fileInputRef && fileInputRef.current?.files) {
                       if (onSubmit) {
-                        onSubmit(fileInputRef.current.files[0]);
+                        try {
+                          onSubmit(fileInputRef.current.files[0], handleRemoveVideo);
+                        } catch (e) {
+                          setError((e as Error).message);
+                        }
                         return;
                       }
                     }
@@ -146,7 +150,9 @@ export function VideoUploadCard({
                 <Upload className="h-12 w-12" />
               </div>
               <div className="space-y-2">
-                <p className="text-lg font-medium">Drop {isDragOver ? "it like it's hot" : 'your video here'}</p>
+                <p className={`text-lg font-medium ${isDragOver && 'animate-tilt-twice'}`}>
+                  Drop {isDragOver ? "it like it's hot" : 'your video here'}
+                </p>
                 <p className="text-foreground/80 text-sm">or click to browse files</p>
                 <p className="text-foreground/60 text-xs">
                   Supports MP4, WebM, OGG, MKV, MOV up to {Math.round(maxFileSize / (1024 * 1024))}MB
