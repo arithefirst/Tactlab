@@ -3,6 +3,7 @@ import { Card } from '@/components/ui/card';
 import { useUser } from '@clerk/nextjs';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { VideoUploadCard } from '@/components/videoUploadCard';
 
 export default function Dashboard() {
   const { isSignedIn, user, isLoaded } = useUser();
@@ -24,12 +25,11 @@ export default function Dashboard() {
         </h1>
       </div>
       <div className="grid w-full flex-grow grid-cols-5 gap-2 p-2">
-        <Card className="col-span-2 flex items-center justify-center">
+        <Card className="col-span-2 flex items-center justify-center bg-white">
           <span>&quot;Previous Video&quot; impl coming soon :D</span>
         </Card>
-        <Card className="col-span-3 flex items-center justify-center">
-          <span>&quot;Previous Video&quot; impl coming soon :D</span>
-        </Card>
+
+        <VideoUploadCard className="col-span-3" />
       </div>
     </main>
   ) : (
