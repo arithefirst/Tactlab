@@ -1,5 +1,6 @@
 import * as Minio from 'minio';
 import { notFound } from 'next/navigation';
+import { NextRequest } from 'next/server';
 import { Readable } from 'stream';
 
 const minioClient = new Minio.Client({
@@ -32,9 +33,9 @@ function readableToReadableStream(readable: Readable): ReadableStream {
 // since it is statistically improbable that a person is able to find even
 // one file before the heat death of the universe or something lol
 
-export async function GET({ params }: { params: { objectId: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ objectId: string }> }) {
   try {
-    const { objectId } = params;
+    const { objectId } = await params;
 
     // check that the object exists and acquire an stream
     const stat = await minioClient.statObject('videos', objectId);
