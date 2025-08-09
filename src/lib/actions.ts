@@ -39,7 +39,8 @@ export async function getPresignedPutUrl(
   const exists = await minioClient.bucketExists('videos');
   if (!exists) await minioClient.makeBucket('videos');
 
-  const objId = `${v4()}.${splitFilename[splitFilename.length - 1]}`;
+  // double UUID v4 puts brute force time at ~10^54 years
+  const objId = `${v4()}-${v4()}.${splitFilename[splitFilename.length - 1]}`;
   const presignedPutUrl = await minioClient.presignedPutObject('videos', objId, 300);
 
   return { objId, presignedPutUrl };
@@ -58,8 +59,7 @@ export async function uploadToTwelvelabs(objId: string): Promise<TasksCreateResp
 
   try {
     // TO-DO
-    // make an api endpoint that wraps around a presignedGetURL and expose it
-    // so that we can upload to TL via a URL instead of a file buffer
+    // integrate with file api so we can use file urls instead of a local file buffer
     await pipeline(objStream, fs.createWriteStream(tempPath));
     const readStream = fs.createReadStream(tempPath);
 
