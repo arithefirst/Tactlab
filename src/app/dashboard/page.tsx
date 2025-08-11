@@ -34,17 +34,7 @@ export default async function Dashboard() {
                 <p className="py-8 text-center text-gray-500">No videos uploaded yet</p>
               ) : (
                 // Add proper HREF when i make the page for individual videos
-                [
-                  ...videos,
-                  ...videos,
-                  ...videos,
-                  ...videos,
-                  ...videos,
-                  ...videos,
-                  ...videos,
-                  ...videos,
-                  ...videos,
-                ].map((video, i) => (
+                videos.map((video, i) => (
                   <div className="-m-2 h-fit w-full p-2" key={`${video.objectId}-${i}`}>
                     <VideoPreview video={video} href="/" />
                   </div>

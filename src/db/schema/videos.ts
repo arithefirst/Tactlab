@@ -6,4 +6,5 @@ export const videosTable = pgTable('videoData', {
   owner: text().notNull(),
   createdAt: timestamp({ mode: 'date' }).notNull().defaultNow(),
   tlVideoId: text(),
+  thumbnail: text(),
 });

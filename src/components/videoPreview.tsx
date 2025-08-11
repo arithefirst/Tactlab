@@ -13,6 +13,7 @@ interface Video {
   createdAt: Date;
   tlVideoId: string | null;
   ogFilename: string;
+  thumbnail: string | null;
 }
 
 export function VideoPreview({ video, href }: { video: Video; href: string }) {
@@ -23,7 +24,7 @@ export function VideoPreview({ video, href }: { video: Video; href: string }) {
   const { user } = useUser();
 
   useEffect(() => {
-    const fetchThumbnail = async () => {
+    async function fetchThumbnail() {
       try {
         setIsLoading(true);
         setHasError(false);
@@ -35,10 +36,15 @@ export function VideoPreview({ video, href }: { video: Video; href: string }) {
       } finally {
         setIsLoading(false);
       }
-    };
+    }
 
-    fetchThumbnail();
-  }, [video.objectId]);
+    if (!video.thumbnail) {
+      fetchThumbnail();
+    } else {
+      setThumbnailURL(video.thumbnail);
+      setIsLoading(false);
+    }
+  }, [video.objectId, video.thumbnail]);
 
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('en-US', {
