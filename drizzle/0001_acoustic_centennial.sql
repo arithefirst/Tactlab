@@ -1,0 +1,1 @@
+ALTER TABLE "videoData" ALTER COLUMN "ogFilename" SET NOT NULL;
