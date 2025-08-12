@@ -29,5 +29,6 @@ RUN chmod 755 .
 EXPOSE 3000
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
+RUN apt-get update && apt-get install -y ffmpeg && rm -rf /var/lib/apt/lists/*
 
 CMD ["bun", "server.js"]
