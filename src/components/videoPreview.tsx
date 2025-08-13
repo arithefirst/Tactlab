@@ -31,19 +31,18 @@ export function VideoPreview({ video, href }: { video: Video; href: string }) {
       if (context) {
         context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
         setThumbnailURL(canvas.toDataURL());
-        console.log(canvas.toDataURL());
       }
     }
   }
 
-  const formatDate = (date: Date) => {
+  function formatDate(date: Date) {
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
       weekday: 'long',
     });
-  };
+  }
 
   return (
     <>
