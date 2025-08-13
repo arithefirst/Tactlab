@@ -6,6 +6,12 @@ import { videosTable } from '@/db/schema/videos';
 import { auth } from '@clerk/nextjs/server';
 import { eq, desc } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Tactlab | Dashboard',
+  description: 'An AI powered app to analyze your gameplay and help you rank up.',
+};
 
 export default async function Dashboard() {
   const { userId } = await auth();
