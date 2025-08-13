@@ -12,19 +12,45 @@ const minioClient = new Minio.Client({
 });
 
 // converts Node readable to a web readable stream
-// so it can be sent as the response body
 function readableToReadableStream(readable: Readable): ReadableStream {
+  let cleanup = false;
+
+  function cleanupListeners() {
+    if (cleanup) return;
+    cleanup = true;
+    readable.removeAllListeners();
+    readable.destroy();
+  }
+
   return new ReadableStream({
     start(controller) {
       readable.on('data', (chunk: unknown) => {
-        controller.enqueue(chunk);
+        try {
+          controller.enqueue(chunk);
+        } catch (error) {
+          cleanupListeners();
+          controller.error(error);
+        }
       });
+
       readable.on('end', () => {
+        cleanupListeners();
         controller.close();
       });
+
       readable.on('error', (err: Error) => {
+        cleanupListeners();
         controller.error(err);
       });
+
+      readable.on('close', () => {
+        cleanupListeners();
+        controller.close();
+      });
+    },
+
+    cancel() {
+      cleanupListeners();
     },
   });
 }
@@ -32,14 +58,15 @@ function readableToReadableStream(readable: Readable): ReadableStream {
 // this route can be unprotected because of our double-uuid filenames,
 // since it is statistically improbable that a person is able to find even
 // one file before the heat death of the universe or something lol
-
 export async function GET(req: NextRequest, { params }: { params: Promise<{ objectId: string }> }) {
+  let objectStream: Readable | null = null;
+
   try {
     const { objectId } = await params;
 
     // check that the object exists and acquire an stream
     const stat = await minioClient.statObject('videos', objectId);
-    const objectStream = await minioClient.getObject('videos', objectId);
+    objectStream = await minioClient.getObject('videos', objectId);
 
     // send the stream as the res
     return new Response(readableToReadableStream(objectStream), {
@@ -49,6 +76,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ obje
       },
     });
   } catch (e) {
+    // Clean up the stream if an error occurs before it's passed to the ReadableStream
+    if (objectStream) {
+      objectStream.destroy();
+    }
+
     // @ts-expect-error expect e to be of type unknown
     if (e.code && e.code === 'NotFound') {
       notFound();
