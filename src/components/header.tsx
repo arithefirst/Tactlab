@@ -17,7 +17,7 @@ export default function Header() {
             <Gamepad2 className="h-5! w-5!" />
             TACTLAB
           </Link>
-          <div className="hidden items-center space-x-6 md:flex">
+          <div className="flex items-center space-x-6">
             <SignedOut>
               <SignInButton>
                 <Button size="sm">Sign In</Button>

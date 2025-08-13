@@ -21,21 +21,23 @@ export default async function Dashboard() {
     .orderBy(desc(videosTable.createdAt));
 
   return (
-    <main className="flex h-(--noheader-screenheight) flex-col p-4">
+    <main className="flex h-(--noheader-screenheight) flex-col p-2 sm:p-4">
       <div className="h-fit">
-        <h1 className="ml-2 text-xl">Welcome to your dashboard!</h1>
+        <h1 className="ml-2 text-lg sm:text-xl">Welcome to your dashboard!</h1>
       </div>
-      <div className="grid min-h-0 w-full flex-grow grid-cols-5 gap-2 p-2">
-        <div className="shadow-shadow rounded-base col-span-2 flex flex-col gap-4 overflow-y-hidden">
-          <Card className="flex h-full flex-col gap-4 bg-white p-4 shadow-none">
-            <h2 className="flex-shrink-0 text-lg font-semibold">Your Videos</h2>
-            <div className="flex min-h-0 flex-grow flex-col gap-2 overflow-y-auto p-2 pr-1">
+      <div className="flex min-h-0 w-full flex-grow flex-col gap-2 p-2 lg:grid lg:grid-cols-5">
+        <div className="shadow-shadow rounded-base flex flex-col gap-4 overflow-y-hidden lg:col-span-2">
+          <Card className="flex h-full flex-col gap-4 bg-white p-3 shadow-none sm:p-4">
+            <h2 className="flex-shrink-0 text-base font-semibold sm:text-lg">Your Videos</h2>
+            <div className="flex min-h-0 flex-grow flex-col gap-2 overflow-y-auto p-1 pr-0 sm:p-2 sm:pr-1">
               {videos.length === 0 ? (
-                <p className="py-8 text-center text-gray-500">No videos uploaded yet</p>
+                <p className="py-6 text-center text-sm text-gray-500 sm:py-8 sm:text-base">
+                  No videos uploaded yet
+                </p>
               ) : (
                 // Add proper HREF when i make the page for individual videos
                 videos.map((video, i) => (
-                  <div className="-m-2 h-fit w-full p-2" key={`${video.objectId}-${i}`}>
+                  <div className="-m-1 h-fit w-full p-1 sm:-m-2 sm:p-2" key={`${video.objectId}-${i}`}>
                     <VideoPreview video={video} href="/" />
                   </div>
                 ))
@@ -44,7 +46,7 @@ export default async function Dashboard() {
           </Card>
         </div>
 
-        <VideoUploadCard className="col-span-3" />
+        <VideoUploadCard className="lg:col-span-3" />
       </div>
     </main>
   );
