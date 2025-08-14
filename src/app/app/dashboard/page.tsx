@@ -31,7 +31,7 @@ export default async function Dashboard() {
       <div className="h-fit">
         <h1 className="ml-2 text-lg sm:text-xl">Welcome to your dashboard!</h1>
       </div>
-      <div className="flex min-h-0 w-full flex-grow flex-col gap-2 p-2 lg:grid lg:grid-cols-5">
+      <div className="flex min-h-0 w-full flex-grow flex-col gap-3 p-2 lg:grid lg:grid-cols-5">
         <div className="shadow-shadow rounded-base flex flex-col gap-4 overflow-y-hidden lg:col-span-2">
           <Card className="flex h-full flex-col gap-4 bg-white p-3 shadow-none sm:p-4">
             <h2 className="flex-shrink-0 text-base font-semibold sm:text-lg">Your Videos</h2>

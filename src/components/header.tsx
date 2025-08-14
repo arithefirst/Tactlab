@@ -28,9 +28,9 @@ export default function Header() {
             </SignedOut>
 
             <SignedIn>
-              {path !== '/app/dashboard' && (
+              {!path.includes('/app/') && (
                 <Link href="/app/dashboard" className={buttonVariants({ size: 'sm' })}>
-                  Upload Gameplay
+                  Dashboard
                 </Link>
               )}
               <UserButton
