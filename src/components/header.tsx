@@ -4,11 +4,9 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import { SignInButton, SignUpButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 import { Gamepad2, Menu } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
 export default function Header() {
-  const path = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
