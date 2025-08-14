@@ -200,7 +200,7 @@ export function VideoUploadCard({
 
             {selectedVideo ? (
               <div className="space-y-4">
-                <div className="flex items-center justify-center text-green-800">
+                <div className="hidden items-center justify-center text-green-800 md:flex">
                   <Video className="h-12 w-12" />
                 </div>
                 <div className="space-y-2">
@@ -233,7 +233,7 @@ export function VideoUploadCard({
               </div>
             ) : (
               <div className="space-y-4">
-                <div className="flex items-center justify-center">
+                <div className="hidden items-center justify-center md:flex">
                   <Upload className="h-12 w-12" />
                 </div>
                 <div className="space-y-2">
