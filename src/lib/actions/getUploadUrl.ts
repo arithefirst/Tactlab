@@ -38,7 +38,7 @@ export async function getPresignedPutUrl(
     objectId,
   });
 
-  revalidatePath('/dashboard');
+  revalidatePath('/app/dashboard');
 
   return { objectId, presignedPutUrl };
 }

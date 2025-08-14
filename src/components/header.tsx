@@ -28,8 +28,8 @@ export default function Header() {
             </SignedOut>
 
             <SignedIn>
-              {path !== '/dashboard' && (
-                <Link href="/dashboard" className={buttonVariants({ size: 'sm' })}>
+              {path !== '/app/dashboard' && (
+                <Link href="/app/dashboard" className={buttonVariants({ size: 'sm' })}>
                   Upload Gameplay
                 </Link>
               )}
