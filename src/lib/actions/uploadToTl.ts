@@ -2,6 +2,7 @@
 import { db } from '@/db';
 import { videosTable } from '@/db/schema/videos';
 import { auth } from '@clerk/nextjs/server';
+import { eq } from 'drizzle-orm';
 import * as fs from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
@@ -32,7 +33,7 @@ export async function uploadToTwelvelabs(objId: string): Promise<TasksCreateResp
       indexId: process.env.TL_INDEX_ID!,
     });
 
-    await db.update(videosTable).set({ tlVideoId: res.videoId });
+    await db.update(videosTable).set({ tlVideoId: res.videoId }).where(eq(videosTable.objectId, objId));
 
     return res;
   } catch (e) {
