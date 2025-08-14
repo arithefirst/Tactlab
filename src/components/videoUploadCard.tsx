@@ -16,6 +16,114 @@ interface VideoUploadCardProps {
 
 type UploadStatus = 'idle' | 'uploading' | 'success' | 'error';
 
+// --- Dialog State Components ---
+
+function UploadingState({ uploadProgress }: { uploadProgress: string }) {
+  return (
+    <div className="flex flex-col items-center justify-center gap-4 py-8">
+      <Loader2 className="text-primary h-8 w-8 animate-spin" />
+      <h3 className="text-center text-lg font-medium">{uploadProgress}</h3>
+      <p className="text-muted-foreground text-center text-sm">
+        Please keep this window open while we process your video.
+      </p>
+    </div>
+  );
+}
+
+function SuccessState({ onReset }: { onReset: () => void }) {
+  return (
+    <div className="flex flex-col items-center justify-center gap-4 py-8">
+      <CheckCircle2 className="h-12 w-12 text-green-500" />
+      <h3 className="text-center text-lg font-medium">Upload Complete!</h3>
+      <Button className="mt-2" onClick={onReset}>
+        Close
+      </Button>
+    </div>
+  );
+}
+
+function ErrorState({ error, onReset }: { error: string; onReset: () => void }) {
+  return (
+    <div className="flex flex-col items-center justify-center gap-4 py-8">
+      <XCircle className="h-12 w-12 text-red-500" />
+      <h3 className="text-center text-lg font-medium">Upload Failed</h3>
+      <div className="w-full max-w-sm rounded-md bg-red-50 p-4">
+        <p className="text-sm text-red-800">{error}</p>
+      </div>
+      <Button className="mt-2" onClick={onReset}>
+        Close
+      </Button>
+    </div>
+  );
+}
+
+// --- Card Content Components ---
+
+function SelectedVideoView({
+  file,
+  onUpload,
+  onRemove,
+}: {
+  file: File;
+  onUpload: () => void;
+  onRemove: () => void;
+}) {
+  return (
+    <div className="space-y-4">
+      <div className="hidden items-center justify-center text-green-800 md:flex">
+        <Video className="h-12 w-12" />
+      </div>
+      <div className="space-y-2">
+        <p className="font-medium text-gray-900">{file.name}</p>
+        <p className="text-sm text-gray-700">{(file.size / (1024 * 1024)).toFixed(2)} MB</p>
+      </div>
+      <div className="flex flex-col">
+        <Button
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            onUpload();
+          }}
+        >
+          <Upload />
+          Upload File
+        </Button>
+        <Button
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove();
+          }}
+          className="mt-2 bg-red-300"
+        >
+          <Trash2 className="mt-0.5" />
+          Remove
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function DropZoneView({ isDragOver, maxFileSize }: { isDragOver: boolean; maxFileSize: number }) {
+  return (
+    <div className="space-y-4">
+      <div className="hidden items-center justify-center md:flex">
+        <Upload className="h-12 w-12" />
+      </div>
+      <div className="space-y-2">
+        <p className={`text-lg font-medium ${isDragOver && 'animate-tilt-twice'}`}>
+          Drop {isDragOver ? "it like it's hot" : 'your video here'}
+        </p>
+        <p className="text-foreground/80 text-sm">or click to browse files</p>
+        <p className="text-foreground/60 text-xs">
+          Supports MP4, WebM, OGG, MKV, MOV up to {Math.round(maxFileSize / (1024 * 1024))}MB
+        </p>
+      </div>
+      <Button className="mt-4">Choose File</Button>
+    </div>
+  );
+}
+
 export function VideoUploadCard({
   className,
   maxFileSize = 350 * 1024 * 1024, // 350MB default
@@ -64,7 +172,6 @@ export function VideoUploadCard({
   function handleDrop(e: React.DragEvent) {
     e.preventDefault();
     setIsDragOver(false);
-
     const files = Array.from(e.dataTransfer.files);
     if (files.length > 0) {
       handleFile(files[0]);
@@ -72,9 +179,9 @@ export function VideoUploadCard({
   }
 
   function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      handleFile(files[0]);
+    const file = e.target.files?.[0];
+    if (file) {
+      handleFile(file);
     }
   }
 
@@ -88,6 +195,12 @@ export function VideoUploadCard({
 
   function handleClick() {
     fileInputRef.current?.click();
+  }
+
+  function resetUploadState() {
+    setUploadStatus('idle');
+    setUploadProgress('Preparing upload...');
+    setError('');
   }
 
   async function handleUpload() {
@@ -104,9 +217,7 @@ export function VideoUploadCard({
       const res = await fetch(presignedPutUrl, {
         method: 'PUT',
         body: selectedVideo,
-        headers: {
-          'Content-Type': selectedVideo.type,
-        },
+        headers: { 'Content-Type': selectedVideo.type },
       });
 
       if (!res.ok) {
@@ -115,26 +226,26 @@ export function VideoUploadCard({
       }
 
       setUploadProgress('Indexing with Twelve Labs...');
-      const { id, videoId } = await uploadToTwelvelabs(objectId);
-      console.log('Upload successful:', { id, videoId });
+      await uploadToTwelvelabs(objectId);
 
       setUploadStatus('success');
-      handleRemoveVideo();
-    } catch (error) {
-      console.error('Error uploading file:', error);
-      setError(error instanceof Error ? error.message : 'Unknown error occurred');
+    } catch (err) {
+      console.error('Error uploading file:', err);
+      setError(err instanceof Error ? err.message : 'An unknown error occurred');
       setUploadStatus('error');
+    } finally {
       handleRemoveVideo();
     }
   }
 
-  function resetUploadState() {
-    setUploadStatus('idle');
-    setUploadProgress('Preparing upload...');
-    setError('');
-  }
+  const isDialogOpen = uploadStatus !== 'idle';
 
-  const isDialogOpen = uploadStatus === 'uploading' || uploadStatus === 'success' || uploadStatus === 'error';
+  const DialogContentMap: Record<UploadStatus, React.ReactNode> = {
+    idle: null,
+    uploading: <UploadingState uploadProgress={uploadProgress} />,
+    success: <SuccessState onReset={resetUploadState} />,
+    error: <ErrorState error={error} onReset={resetUploadState} />,
+  };
 
   return (
     <>
@@ -145,39 +256,8 @@ export function VideoUploadCard({
         }}
       >
         <DialogContent className="sm:max-w-md" showClose={uploadStatus !== 'uploading'}>
-          <DialogTitle className="sr-only">Upload Status Dialog</DialogTitle>
-          {uploadStatus === 'uploading' && (
-            <div className="flex flex-col items-center justify-center gap-4 py-8">
-              <Loader2 className="text-primary h-8 w-8 animate-spin" />
-              <h3 className="text-center text-lg font-medium">{uploadProgress}</h3>
-              <p className="text-muted-foreground text-center text-sm">
-                Please keep this window open while we process your video.
-              </p>
-            </div>
-          )}
-
-          {uploadStatus === 'success' && (
-            <div className="flex flex-col items-center justify-center gap-4 py-8">
-              <CheckCircle2 className="h-12 w-12 text-green-500" />
-              <h3 className="text-center text-lg font-medium">Upload Complete!</h3>
-              <Button className="mt-2" onClick={resetUploadState}>
-                Close
-              </Button>
-            </div>
-          )}
-
-          {uploadStatus === 'error' && (
-            <div className="flex flex-col items-center justify-center gap-4 py-8">
-              <XCircle className="h-12 w-12 text-red-500" />
-              <h3 className="text-center text-lg font-medium">Upload Failed</h3>
-              <div className="w-full max-w-sm rounded-md bg-red-50 p-4">
-                <p className="text-sm text-red-800">{error}</p>
-              </div>
-              <Button className="mt-2" onClick={resetUploadState}>
-                Close
-              </Button>
-            </div>
-          )}
+          <DialogTitle className="sr-only">Upload Status</DialogTitle>
+          {DialogContentMap[uploadStatus]}
         </DialogContent>
       </Dialog>
 
@@ -199,54 +279,9 @@ export function VideoUploadCard({
             />
 
             {selectedVideo ? (
-              <div className="space-y-4">
-                <div className="hidden items-center justify-center text-green-800 md:flex">
-                  <Video className="h-12 w-12" />
-                </div>
-                <div className="space-y-2">
-                  <p className="font-medium text-gray-900">{selectedVideo.name}</p>
-                  <p className="text-sm text-gray-700">{(selectedVideo.size / (1024 * 1024)).toFixed(2)} MB</p>
-                </div>
-                <div className="flex flex-col">
-                  <Button
-                    size="sm"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleUpload();
-                    }}
-                  >
-                    <Upload />
-                    Upload File
-                  </Button>
-                  <Button
-                    size="sm"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleRemoveVideo();
-                    }}
-                    className="mt-2 bg-red-300"
-                  >
-                    <Trash2 className="mt-0.5" />
-                    Remove
-                  </Button>
-                </div>
-              </div>
+              <SelectedVideoView file={selectedVideo} onUpload={handleUpload} onRemove={handleRemoveVideo} />
             ) : (
-              <div className="space-y-4">
-                <div className="hidden items-center justify-center md:flex">
-                  <Upload className="h-12 w-12" />
-                </div>
-                <div className="space-y-2">
-                  <p className={`text-lg font-medium ${isDragOver && 'animate-tilt-twice'}`}>
-                    Drop {isDragOver ? "it like it's hot" : 'your video here'}
-                  </p>
-                  <p className="text-foreground/80 text-sm">or click to browse files</p>
-                  <p className="text-foreground/60 text-xs">
-                    Supports MP4, WebM, OGG, MKV, MOV up to {Math.round(maxFileSize / (1024 * 1024))}MB
-                  </p>
-                </div>
-                <Button className="mt-4">Choose File</Button>
-              </div>
+              <DropZoneView isDragOver={isDragOver} maxFileSize={maxFileSize} />
             )}
           </div>
 
