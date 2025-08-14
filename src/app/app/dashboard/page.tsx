@@ -41,10 +41,9 @@ export default async function Dashboard() {
                   No videos uploaded yet
                 </p>
               ) : (
-                // Add proper HREF when i make the page for individual videos
                 videos.map((video, i) => (
                   <div className="-m-1 h-fit w-full p-1 sm:-m-2 sm:p-2" key={`${video.objectId}-${i}`}>
-                    <VideoPreview video={video} href="/" />
+                    <VideoPreview video={video} />
                   </div>
                 ))
               )}

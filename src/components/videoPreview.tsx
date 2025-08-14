@@ -12,7 +12,7 @@ interface Video {
   ogFilename: string;
 }
 
-export function VideoPreview({ video, href }: { video: Video; href: string }) {
+export function VideoPreview({ video }: { video: Video }) {
   const { user } = useUser();
 
   function formatDate(date: Date) {
@@ -26,7 +26,7 @@ export function VideoPreview({ video, href }: { video: Video; href: string }) {
 
   return (
     <>
-      <Link href={href} className="contents">
+      <Link href={`/app/video/${video.objectId}`} className="contents">
         <Card className="hover:translate-x-boxShadowX hover:translate-y-boxShadowY transition-all hover:shadow-none">
           <div className="flex flex-col gap-3 p-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-4">
             <div className="border-border relative aspect-video overflow-hidden rounded-md border-2">
