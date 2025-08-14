@@ -30,7 +30,13 @@ export function VideoPreview({ video, href }: { video: Video; href: string }) {
         <Card className="hover:translate-x-boxShadowX hover:translate-y-boxShadowY transition-all hover:shadow-none">
           <div className="flex flex-col gap-3 p-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-4">
             <div className="border-border relative aspect-video overflow-hidden rounded-md border-2">
-              <video className="h-full w-full object-cover" src={`/api/file/${video.objectId}`} />
+              <video className="absolute z-10 h-full w-full object-cover" src={`/api/file/${video.objectId}`} />
+              <div className="bg-secondary-background text-foreground/60 absolute flex h-full w-full items-center justify-center">
+                <div className="text-center">
+                  <div className="mb-2 text-2xl">🎥</div>
+                  <div className="text-sm">No preview</div>
+                </div>
+              </div>
             </div>
             <div className="flex flex-col justify-center space-y-2 sm:col-span-2">
               <h3
