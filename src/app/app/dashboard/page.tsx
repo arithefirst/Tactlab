@@ -50,7 +50,7 @@ export default async function Dashboard() {
             </div>
           </Card>
         </div>
-        <VideoUploadCard className="max-h-1/2 lg:col-span-2" />
+        <VideoUploadCard className="max-h-1/2 md:max-h-none lg:col-span-3" />
       </div>
     </main>
   );

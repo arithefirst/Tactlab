@@ -53,7 +53,6 @@ export function VideoPreview({ video }: { video: Video }) {
                     by <span className="font-bold">{user?.fullName}</span>
                   </p>
                 )}
-                {video.tlVideoId && <p className="text-foreground/50 font-mono text-xs">ID: {video.tlVideoId}</p>}
               </div>
             </div>
           </div>
