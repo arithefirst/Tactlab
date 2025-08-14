@@ -39,8 +39,8 @@ export default async function VideoPage({ params }: { params: { videoId: string 
         <p className="text-xs text-gray-600 sm:text-sm">Video Analysis</p>
       </div>
 
-      <div className="flex h-full w-full flex-col gap-3 px-2 md:gap-2 md:px-0 lg:flex-row">
-        <div className="flex w-full justify-center lg:w-3/5">
+      <div className="flex h-full w-full flex-col gap-3 px-2 md:px-0 lg:flex-row">
+        <div className="flex w-full items-center justify-center lg:w-3/5">
           <VideoPlayer videoSrc={`/api/file/${video.objectId}`} />
         </div>
 
