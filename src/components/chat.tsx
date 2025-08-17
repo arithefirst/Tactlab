@@ -98,7 +98,7 @@ export default function ChatUi({ objectId }: ChatUiProps) {
   }
 
   return (
-    <Card className="flex h-full flex-col border-0 pb-0 shadow-none!">
+    <Card className="flex h-full flex-col border-0 py-0 shadow-none!">
       <CardContent className="flex h-full flex-col p-0">
         <div className="flex-1 space-y-2 overflow-y-auto px-4 py-2">
           {messages.length === 0 && (
