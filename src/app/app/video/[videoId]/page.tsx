@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: 'AI-powered gameplay analysis',
 };
 
-export default async function VideoPage({ params }: { params: { videoId: string } }) {
+export default async function VideoPage({ params }: { params: Promise<{ videoId: string }> }) {
   const { videoId } = await params;
   const { userId } = await auth();
 
