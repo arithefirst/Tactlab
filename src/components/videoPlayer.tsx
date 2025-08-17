@@ -72,6 +72,10 @@ export const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(({ video
     video.addEventListener('play', handlePlay);
     video.addEventListener('pause', handlePause);
 
+    if (!isDragging && !video.paused) {
+      animationFrameId = requestAnimationFrame(updateTime);
+    }
+
     // Check if duration is already available
     if (isFinite(video.duration)) {
       setDuration(video.duration);
@@ -135,7 +139,7 @@ export const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(({ video
   }
 
   return (
-    <div className={className + ' shadow-shadow h-fit overflow-hidden rounded-lg border bg-white'}>
+    <div className={className + ' shadow-shadow h-fit w-full overflow-hidden rounded-lg border bg-white'}>
       <div className="relative bg-black">
         <video ref={videoRef} src={videoSrc} className="aspect-video w-full" />
       </div>
