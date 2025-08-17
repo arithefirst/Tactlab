@@ -7,6 +7,9 @@ import { auth } from '@clerk/nextjs/server';
 import { eq, desc } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
+import ScoreGraph from '@/components/scoreGraph';
+import { scoresTable } from '@/db/schema/score';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export const metadata: Metadata = {
   title: 'Tactlab | Dashboard',
@@ -20,11 +23,14 @@ export default async function Dashboard() {
     redirect('/');
   }
 
-  const videos = await db
-    .select()
-    .from(videosTable)
-    .where(eq(videosTable.owner, userId))
-    .orderBy(desc(videosTable.createdAt));
+  const [videos, scores] = await Promise.all([
+    db.select().from(videosTable).where(eq(videosTable.owner, userId)).orderBy(desc(videosTable.createdAt)),
+    db.select().from(scoresTable).where(eq(scoresTable.owner, userId)).orderBy(desc(scoresTable.timestamp)),
+  ]);
+
+  const tabClass =
+    'shadow-shadow hover:translate-x-boxShadowX hover:translate-y-boxShadowY cursor-pointer text-xs ' +
+    'transition-all hover:shadow-none sm:text-sm bg-white border-border';
 
   return (
     <main className="flex h-(--noheader-screenheight) flex-col p-2 sm:p-4">
@@ -50,7 +56,24 @@ export default async function Dashboard() {
             </div>
           </Card>
         </div>
-        <VideoUploadCard className="max-h-1/2 md:max-h-none lg:col-span-3" />
+        <div className="flex h-full flex-col lg:col-span-3">
+          <Tabs defaultValue="upload" className="flex h-full flex-col">
+            <TabsList className="shadow-shadow grid w-full grid-cols-2 gap-1 px-1 sm:gap-2 sm:px-2">
+              <TabsTrigger value="upload" className={tabClass}>
+                Upload Video
+              </TabsTrigger>
+              <TabsTrigger value="progress" className={tabClass}>
+                Track Progress
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="upload" className="flex-1">
+              <VideoUploadCard className="max-h-1/2 md:max-h-none" />
+            </TabsContent>
+            <TabsContent value="progress" className="flex-1">
+              <ScoreGraph scores={scores} className="h-full" />
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </main>
   );
