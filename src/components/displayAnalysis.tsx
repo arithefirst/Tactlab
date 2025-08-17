@@ -1,8 +1,8 @@
 'use client';
 
-import { startAnalysis } from '@/lib/actions/analyze';
+import { AnalysisResult, startAnalysis } from '@/lib/actions/analyze';
 import { Loader2 } from 'lucide-react';
-import { useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { Button } from './ui/button';
 import { Card, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from './ui/dialog';
@@ -11,17 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 interface AnalysisTabProps {
   objectId: string;
   onTimestampClick: (time: number) => void;
-}
-
-interface AnalysisResult {
-  mechanics: {
-    start: number;
-    summary: string;
-  }[];
-  strategy: {
-    start: number;
-    summary: string;
-  }[];
+  analysis: AnalysisResult | null;
 }
 
 function formatTime(time: number) {
@@ -32,11 +22,15 @@ function formatTime(time: number) {
   return `${minutes}:${seconds.toString().padStart(2, '0')}`;
 }
 
-export function AnalysisTab({ objectId, onTimestampClick }: AnalysisTabProps) {
+export function AnalysisTab({ objectId, onTimestampClick, analysis }: AnalysisTabProps) {
   const [isPending, startTransition] = useTransition();
   const [results, setResults] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showNotReadyDialog, setShowNotReadyDialog] = useState(false);
+
+  useEffect(() => {
+    if (analysis) setResults(analysis);
+  }, [analysis]);
 
   const handleStartAnalysis = () => {
     startTransition(async () => {
@@ -67,7 +61,7 @@ export function AnalysisTab({ objectId, onTimestampClick }: AnalysisTabProps) {
             {results.mechanics.map((item, index) => (
               <Card
                 key={index}
-                className="hover:border-main cursor-pointer transition-all"
+                className="hover:translate-x-boxShadowX hover:translate-y-boxShadowY cursor-pointer transition-all hover:shadow-none"
                 onClick={() => onTimestampClick(item.start)}
               >
                 <CardHeader className="p-3">
@@ -83,7 +77,7 @@ export function AnalysisTab({ objectId, onTimestampClick }: AnalysisTabProps) {
             {results.strategy.map((item, index) => (
               <Card
                 key={index}
-                className="hover:border-main cursor-pointer transition-all"
+                className="hover:translate-x-boxShadowX hover:translate-y-boxShadowY cursor-pointer transition-all hover:shadow-none"
                 onClick={() => onTimestampClick(item.start)}
               >
                 <CardHeader className="p-3">

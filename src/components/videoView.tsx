@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { VideoPlayer, VideoPlayerRef } from '@/components/videoPlayer';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AnalysisTab } from './displayAnalysis';
+import { AnalysisResult } from '@/lib/actions/analyze';
 
 interface VideoPlayerProps {
   video: {
@@ -13,6 +14,7 @@ interface VideoPlayerProps {
     createdAt: Date;
     tlVideoId: string | null;
     thumbnail: string | null;
+    analysis: AnalysisResult | null;
   };
 }
 
@@ -64,7 +66,11 @@ export function VideoView({ video }: VideoPlayerProps) {
               value="analysis"
               className="bg-background rounded-base flex-1 overflow-auto border-2 p-1 sm:p-2"
             >
-              <AnalysisTab objectId={video.objectId} onTimestampClick={onTimestampClick} />
+              <AnalysisTab
+                objectId={video.objectId}
+                onTimestampClick={onTimestampClick}
+                analysis={video.analysis}
+              />
             </TabsContent>
             <TabsContent
               value="timestamps"

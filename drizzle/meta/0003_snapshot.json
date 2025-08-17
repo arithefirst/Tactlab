@@ -1,0 +1,81 @@
+{
+  "id": "4a67920c-5da2-49f8-a028-a8fb9688bb89",
+  "prevId": "fe57fef0-a1de-433e-ba5f-d60b4f806ef5",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.videoData": {
+      "name": "videoData",
+      "schema": "",
+      "columns": {
+        "objectId": {
+          "name": "objectId",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "ogFilename": {
+          "name": "ogFilename",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "owner": {
+          "name": "owner",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "tlVideoId": {
+          "name": "tlVideoId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "thumbnail": {
+          "name": "thumbnail",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "analysis": {
+          "name": "analysis",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "videoData_objectId_unique": {
+          "name": "videoData_objectId_unique",
+          "nullsNotDistinct": false,
+          "columns": ["objectId"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

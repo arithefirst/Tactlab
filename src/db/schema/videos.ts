@@ -1,4 +1,6 @@
-import { pgTable, text, timestamp } from 'drizzle-orm/pg-core';
+import { jsonb, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
+
+import { AnalysisResult } from '@/lib/actions/analyze';
 
 export const videosTable = pgTable('videoData', {
   objectId: text().primaryKey().unique(),
@@ -7,4 +9,5 @@ export const videosTable = pgTable('videoData', {
   createdAt: timestamp({ mode: 'date' }).notNull().defaultNow(),
   tlVideoId: text(),
   thumbnail: text(),
+  analysis: jsonb().$type<AnalysisResult>(),
 });

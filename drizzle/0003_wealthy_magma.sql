@@ -1,0 +1,1 @@
+ALTER TABLE "videoData" ADD COLUMN "analysis" jsonb;

@@ -46,6 +46,17 @@ Return the output strictly as JSON in the following format:
 ${jsonStructure}
 `;
 
+export interface AnalysisResult {
+  mechanics: {
+    start: number;
+    summary: string;
+  }[];
+  strategy: {
+    start: number;
+    summary: string;
+  }[];
+}
+
 const analysisResultSchema = z.array(
   z.object({
     start: z.number(),
@@ -98,47 +109,47 @@ async function processStream(videoId: string, prompt: string, temperature: numbe
   });
 }
 
-export async function startAnalysis(objectId: string) {
+export async function startAnalysis(objectId: string): Promise<AnalysisResult> {
   'use server';
-  const temperature = 0.2;
+
+  const { userId } = await auth();
+  if (!userId) {
+    throw new Error('Authentication required. Please sign in to continue.');
+  }
 
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      throw new Error('Authentication required. Please sign in to continue.');
+    const [video] = await db
+      .select({ videoId: videosTable.tlVideoId, analysis: videosTable.analysis })
+      .from(videosTable)
+      .where(and(eq(videosTable.objectId, objectId), eq(videosTable.owner, userId)))
+      .limit(1);
+
+    if (!video) {
+      throw new Error('Video not found or you do not have permission to access it.');
     }
 
-    const videoId = (
-      await db
-        .select({ videoId: videosTable.tlVideoId })
-        .from(videosTable)
-        .where(and(eq(videosTable.objectId, objectId), eq(videosTable.owner, userId)))
-        .limit(1)
-    )[0].videoId;
-
-    if (!videoId) {
-      throw new Error('Video does not exist.');
+    if (video.analysis) {
+      return video.analysis;
     }
 
-    const mechStream = processStream(videoId, mechanicsPrompt, temperature);
-    const stratStream = processStream(videoId, strategyPrompt, temperature);
-    const results = await Promise.all([mechStream, stratStream]);
+    if (!video.videoId) {
+      throw new Error('Video has not been processed yet and has no video ID.');
+    }
 
-    const mechResults = results[0];
-    const stratResults = results[1];
+    const temperature = 0.2;
+    const [mechResults, stratResults] = await Promise.all([
+      processStream(video.videoId, mechanicsPrompt, temperature),
+      processStream(video.videoId, strategyPrompt, temperature),
+    ]);
 
-    const parsedMechResults = parseResult(mechResults);
-    const parsedStratResults = parseResult(stratResults);
+    const result = { mechanics: parseResult(mechResults), strategy: parseResult(stratResults) };
 
-    return { mechanics: parsedMechResults, strategy: parsedStratResults };
+    // save the result to the db for future access
+    await db.update(videosTable).set({ analysis: result }).where(eq(videosTable.objectId, objectId));
+
+    return result;
   } catch (e) {
-    console.error(e);
-
-    // @ts-expect-error "e is of type unknown"
-    if (e.rawResponse) {
-      // @ts-expect-error "e is of type unknown"
-      console.error(e.rawResponse);
-    }
-    throw e;
+    console.error('An error occurred during analysis:', e);
+    throw new Error('Failed to analyze video. Please try again later.');
   }
 }
