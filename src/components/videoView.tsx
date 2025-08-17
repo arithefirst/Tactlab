@@ -1,13 +1,14 @@
 'use client';
 
 import { AnalysisResult, startAnalysis } from '@/lib/actions/analyze';
-import { Loader2 } from 'lucide-react';
+import { CornerUpLeft, Loader2 } from 'lucide-react';
 import { useRef, useState, useTransition } from 'react';
 import { AnalysisContent } from './displayAnalysis';
-import { Button } from './ui/button';
+import { Button, buttonVariants } from './ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from './ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { VideoPlayer, VideoPlayerRef } from './videoPlayer';
+import Link from 'next/link';
 
 interface VideoPlayerProps {
   video: {
@@ -49,6 +50,10 @@ export function VideoView({ video }: VideoPlayerProps) {
     });
   };
 
+  const tabClass =
+    'shadow-shadow hover:translate-x-boxShadowX hover:translate-y-boxShadowY cursor-pointer text-xs ' +
+    'transition-all hover:shadow-none sm:text-sm bg-white border-border';
+
   return (
     <main className="flex h-(--noheader-screenheight) flex-col p-1 sm:p-2 md:p-4">
       <Dialog open={showNotReadyDialog} onOpenChange={setShowNotReadyDialog}>
@@ -65,9 +70,15 @@ export function VideoView({ video }: VideoPlayerProps) {
         </DialogContent>
       </Dialog>
 
-      <div className="mb-2 px-2 py-2 sm:mb-4 md:my-0">
-        <h1 className="truncate text-base font-semibold sm:text-lg md:text-xl">{video.ogFilename}</h1>
-        <p className="text-xs text-gray-600 sm:text-sm">Video Analysis</p>
+      <div className="flex">
+        <Link href="/app/dashboard/" className={buttonVariants({})}>
+          <CornerUpLeft />
+          Back
+        </Link>
+        <div className="ml-auto flex flex-col items-end p-2 sm:mb-4 md:my-0">
+          <h1 className="truncate text-base font-semibold sm:text-lg md:text-xl">{video.ogFilename}</h1>
+          <p className="text-xs text-gray-600 sm:text-sm">Video Analysis</p>
+        </div>
       </div>
 
       <div className="flex h-full min-h-0 w-full flex-col gap-3 px-2 md:px-0 lg:flex-row">
@@ -78,24 +89,15 @@ export function VideoView({ video }: VideoPlayerProps) {
         <div className="mb-2 h-full w-full flex-grow sm:min-h-[400px] lg:w-2/5">
           <div className="shadow-shadow flex h-full flex-col rounded-lg border bg-white p-2 sm:p-4">
             {results ? (
-              <Tabs defaultValue="mechanics" className="flex h-full flex-col">
+              <Tabs defaultValue="mechanics" className="flex h-full flex-col pb-1!">
                 <TabsList className="grid w-full grid-cols-3 gap-1 px-1 sm:gap-2 sm:px-2">
-                  <TabsTrigger
-                    value="mechanics"
-                    className="hover:border-border border-background cursor-pointer border text-xs sm:text-sm"
-                  >
+                  <TabsTrigger value="mechanics" className={tabClass}>
                     Mechanics
                   </TabsTrigger>
-                  <TabsTrigger
-                    value="strategy"
-                    className="hover:border-border border-background cursor-pointer border text-xs sm:text-sm"
-                  >
+                  <TabsTrigger value="strategy" className={tabClass}>
                     Strategy
                   </TabsTrigger>
-                  <TabsTrigger
-                    value="chat"
-                    className="hover:border-border border-background cursor-pointer border text-xs sm:text-sm"
-                  >
+                  <TabsTrigger value="chat" className={tabClass}>
                     Chat
                   </TabsTrigger>
                 </TabsList>
