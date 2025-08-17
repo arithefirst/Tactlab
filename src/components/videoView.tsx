@@ -27,7 +27,6 @@ export function VideoView({ video }: VideoPlayerProps) {
   const playerRef = useRef<VideoPlayerRef>(null);
   const [isPending, startTransition] = useTransition();
   const [results, setResults] = useState<AnalysisResult | null>(video.analysis);
-  const [error, setError] = useState<string | null>(null);
   const [showNotReadyDialog, setShowNotReadyDialog] = useState(false);
 
   const onTimestampClick = (time: number) => {
@@ -36,17 +35,12 @@ export function VideoView({ video }: VideoPlayerProps) {
 
   const handleStartAnalysis = () => {
     startTransition(async () => {
-      setError(null);
       try {
         const analysisResults = await startAnalysis(video.objectId);
         setResults(analysisResults);
       } catch (e: unknown) {
-        if (e instanceof Error && e.message.includes('Video has not been processed yet')) {
-          setShowNotReadyDialog(true);
-        } else {
-          setError('Failed to analyze footage. Please try again.');
-          console.error(e);
-        }
+        setShowNotReadyDialog(true); // Always show dialog on error
+        console.error(e);
       }
     });
   };
@@ -58,7 +52,7 @@ export function VideoView({ video }: VideoPlayerProps) {
   return (
     <main className="flex h-(--noheader-screenheight) flex-col p-1 sm:p-2 md:p-4">
       <Dialog open={showNotReadyDialog} onOpenChange={setShowNotReadyDialog}>
-        <DialogContent>
+        <DialogContent className="bg-red-300">
           <DialogHeader>
             <DialogTitle>Video Not Ready</DialogTitle>
             <DialogDescription>
@@ -143,7 +137,6 @@ export function VideoView({ video }: VideoPlayerProps) {
                     <Button onClick={handleStartAnalysis} disabled={isPending}>
                       Start Analysis
                     </Button>
-                    {error && <p className="text-sm text-red-500">{error}</p>}
                   </>
                 )}
               </div>
