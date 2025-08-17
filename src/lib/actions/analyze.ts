@@ -6,6 +6,7 @@ import { auth } from '@clerk/nextjs/server';
 import { and, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { tlClient } from './clients';
+import { scoresTable } from '@/db/schema/score';
 
 const jsonStructure = `
 Return the output strictly as JSON in the following format:
@@ -14,7 +15,8 @@ Return the output strictly as JSON in the following format:
 {
 "start": <start_time_in_seconds>,
 "end": <end_time_in_seconds>,
-"summary": "<short description of the decision>"
+"summary": "<short description of the decision>",
+"score": "<score for the footage>"
 }
 ]`;
 
@@ -27,6 +29,8 @@ cooldown usage, etc). For each detected event, return:
 1. The start timestamp in seconds
 2. The end timestamp in seconds
 3. A 1–2 sentence summary of the decision and its context, clarifying if it was a good play or a mistake.
+
+In addition, return a score from 0-10000, where 0 is for abysmal performance, and 10000 is perfect with almost no mistakes.
 
 ${jsonStructure}
 `;
@@ -41,7 +45,7 @@ For each detected event, return:
 2. The end timestamp in seconds
 3. A 1–2 sentence summary describing the mechanical skill performed and whether it was successful or a failure.
 
-Return the output strictly as JSON in the following format:
+In addition, return a score from 0-10000, where 0 is for abysmal performance, and 10000 is perfect with almost no mistakes.
 
 ${jsonStructure}
 `;
@@ -62,6 +66,7 @@ const analysisResultSchema = z.array(
     start: z.number(),
     end: z.number(),
     summary: z.string(),
+    score: z.number(),
   }),
 );
 
@@ -70,10 +75,14 @@ function parseResult(input: string | undefined) {
     return [];
   }
   try {
-    // The tl client sometimes returns it inside a md codeblock
     const jsonString = input.replace(/^```json\s*/, '').replace(/```$/, '');
     const parsed = JSON.parse(jsonString);
-    return analysisResultSchema.parse(parsed);
+    // Only return start, end, summary (ignore score)
+    return analysisResultSchema.parse(parsed).map(({ start, end, summary }) => ({
+      start,
+      end,
+      summary,
+    }));
   } catch (e) {
     console.error('Failed to parse analysis result:', e);
     console.error('Raw input:', input);
@@ -109,6 +118,17 @@ async function processStream(videoId: string, prompt: string, temperature: numbe
   });
 }
 
+function extractScores(input: string | undefined): number[] {
+  if (!input) return [];
+  try {
+    const jsonString = input.replace(/^```json\s*/, '').replace(/```$/, '');
+    const parsed = JSON.parse(jsonString);
+    return Array.isArray(parsed) ? parsed.map((item) => (typeof item.score === 'number' ? item.score : 0)) : [];
+  } catch {
+    return [];
+  }
+}
+
 export async function startAnalysis(objectId: string): Promise<AnalysisResult> {
   'use server';
 
@@ -141,6 +161,17 @@ export async function startAnalysis(objectId: string): Promise<AnalysisResult> {
       processStream(video.videoId, mechanicsPrompt, temperature),
       processStream(video.videoId, strategyPrompt, temperature),
     ]);
+
+    const mechScores = extractScores(mechResults);
+    const stratScores = extractScores(stratResults);
+    const allScores = [...mechScores, ...stratScores];
+    const avgScore = allScores.length ? Math.round(allScores.reduce((a, b) => a + b, 0) / allScores.length) : 0;
+
+    // Log average score in the db
+    await db.insert(scoresTable).values({
+      owner: userId,
+      score: avgScore,
+    });
 
     const result = { mechanics: parseResult(mechResults), strategy: parseResult(stratResults) };
 

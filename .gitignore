@@ -46,3 +46,7 @@ next-env.d.ts
 
 #Minio
 videoData/
+
+# SQL Tools extension
+.vscode/
+tactlab.session.sql
