@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { VideoPlayer, VideoPlayerRef } from './videoPlayer';
 import Link from 'next/link';
+import ChatUi from './chat';
 
 interface VideoPlayerProps {
   video: {
@@ -121,7 +122,7 @@ export function VideoView({ video }: VideoPlayerProps) {
                   value="chat"
                   className="bg-background rounded-base flex-1 overflow-auto border-2 p-1 sm:p-2"
                 >
-                  Woah, chat!
+                  <ChatUi objectId={video.objectId} />
                 </TabsContent>
               </Tabs>
             ) : (
