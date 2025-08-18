@@ -27,10 +27,12 @@ echo -e "${YELLOW}----------------------------------------${NC}"
 # Prompt for environment variables
 echo -e "${CYAN}Please enter the following environment variables:${NC}"
 
-echo -en "${YELLOW}Minio Username (S3 Access Key):${NC} "
+echo -en "${YELLOW}S3 Access Key:${NC} "
 read MINIO_USER
-echo -en "${YELLOW}Minio Password (S3 Secret Key):${NC} "
+echo -en "${YELLOW}S3 Secret Key:${NC} "
 read MINIO_PASS
+echo -en "${YELLOW}S3 Port:${NC} "
+read S3_PORT
 echo -en "${YELLOW}Clerk Publishable Key:${NC} "
 read CLERK_PUB
 echo -en "${YELLOW}Clerk Secret Key:${NC} "
@@ -51,8 +53,7 @@ echo -e "${GREEN}Configuring docker-compose.yml...${NC}"
 
 sed -i "s/S3_ACCESSKEY=minioadmin/S3_ACCESSKEY=${MINIO_USER}/g" "$DOCKER_COMPOSE_FILE"
 sed -i "s/S3_SECRETKEY=minioadmin/S3_SECRETKEY=${MINIO_PASS}/g" "$DOCKER_COMPOSE_FILE"
-sed -i "s/MINIO_ROOT_USER=minioadmin/MINIO_ROOT_USER=${MINIO_USER}/g" "$DOCKER_COMPOSE_FILE"
-sed -i "s/MINIO_ROOT_PASSWORD=minioadmin/MINIO_ROOT_PASSWORD=${MINIO_PASS}/g" "$DOCKER_COMPOSE_FILE"
+sed -i "s/S3_PORT=9000/S3_PORT=${S3_PORT}/g" "$DOCKER_COMPOSE_FILE"
 sed -i "s/NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key_here/NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${CLERK_PUB}/g" "$DOCKER_COMPOSE_FILE"
 sed -i "s/CLERK_SECRET_KEY=your_clerk_secret_key_here/CLERK_SECRET_KEY=${CLERK_SEC}/g" "$DOCKER_COMPOSE_FILE"
 sed -i "s/TL_API_KEY=your_tactlab_api_key_here/TL_API_KEY=${TL_API}/g" "$DOCKER_COMPOSE_FILE"

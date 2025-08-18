@@ -5,11 +5,12 @@ services:
     image: ghcr.io/arithefirst/tactlab
     environment:
       - NODE_ENV=production
-      - S3_ENDPOINT=minio
+      - S3_ENDPOINT=127.0.0.1
 
       # Change These
       - S3_ACCESSKEY=minioadmin
       - S3_SECRETKEY=minioadmin
+      - S3_PORT=9000
       - NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key_here
       - CLERK_SECRET_KEY=your_clerk_secret_key_here
       - TL_API_KEY=your_tactlab_api_key_here
@@ -19,21 +20,6 @@ services:
       - 3000:3000
     depends_on:
       - postgres
-
-  # S3 Bucket / Minio
-  minio:
-    container_name: tactlab-s3
-    image: docker.io/bitnami/minio
-    restart: always
-    ports:
-      - 9000:9000
-      - 9001:9001
-    environment:
-      # Change These
-      - MINIO_ROOT_USER=minioadmin
-      - MINIO_ROOT_PASSWORD=minioadmin
-    volumes:
-      - tactlab:/data
 
   # PostgreSQL
   postgres:
