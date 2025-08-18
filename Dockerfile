@@ -24,7 +24,20 @@ ENV NODE_ENV=production
 COPY --from=build /app/public ./public
 COPY --from=build /app/.next/standalone ./
 COPY --from=build /app/.next/static ./.next/static
+
+# Drizzle Stuff
+COPY --from=build /app/drizzle.config.ts ./
+COPY --from=build /app/src/db/schema ./src/db/schema
+COPY --from=build /app/drizzle ./drizzle
+COPY --from=build /app/tsconfig.json ./
+RUN bun i drizzle-kit
+
 RUN chmod 755 .
+
+# Custom entrypoint that runs drizzle migrations
+COPY docker-entrypoint.sh .
+RUN chmod +x docker-entrypoint.sh
+ENTRYPOINT ["./docker-entrypoint.sh"]
 
 EXPOSE 3000
 ENV PORT 3000
