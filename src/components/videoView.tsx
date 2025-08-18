@@ -59,7 +59,7 @@ export function VideoView({ video }: VideoPlayerProps) {
     'transition-all hover:shadow-none sm:text-sm bg-white border-border';
 
   return (
-    <main className="flex h-(--noheader-screenheight) flex-col p-1 sm:p-2 md:p-4">
+    <main className="flex flex-col p-1 sm:h-(--noheader-screenheight) md:p-4">
       <Dialog open={showNotReadyDialog} onOpenChange={setShowNotReadyDialog}>
         <DialogContent className="bg-red-300">
           <DialogHeader>
@@ -74,13 +74,15 @@ export function VideoView({ video }: VideoPlayerProps) {
         </DialogContent>
       </Dialog>
 
-      <div className="flex">
+      <div className="flex max-w-full items-center py-2">
         <Link href="/app/dashboard/" className={buttonVariants({})}>
           <CornerUpLeft />
           Back
         </Link>
-        <div className="ml-auto flex flex-col items-end p-2 sm:mb-4 md:my-0">
-          <h1 className="truncate text-base font-semibold sm:text-lg md:text-xl">{video.ogFilename}</h1>
+        <div className="flex min-w-0 flex-1 flex-col items-center p-2 px-4 sm:mb-4 md:my-0 md:items-end">
+          <h1 className="w-full truncate text-base font-semibold sm:w-fit sm:text-lg md:text-xl">
+            {video.ogFilename}
+          </h1>
           <p className="text-xs text-gray-600 sm:text-sm">Video Analysis</p>
         </div>
       </div>
@@ -95,7 +97,7 @@ export function VideoView({ video }: VideoPlayerProps) {
         </div>
 
         <div className="mb-2 h-full w-full flex-grow sm:min-h-[400px] lg:w-2/5">
-          <div className="shadow-shadow flex h-full flex-col rounded-lg border bg-white p-2 sm:p-4">
+          <div className="shadow-shadow flex h-full max-h-[60vh] flex-col overflow-y-auto rounded-lg border bg-white p-2 sm:max-h-none sm:overflow-y-visible sm:p-4">
             {results ? (
               <Tabs defaultValue="mechanics" className="flex h-full flex-col pb-1!">
                 <TabsList className="grid w-full grid-cols-3 gap-1 px-1 sm:gap-2 sm:px-2">

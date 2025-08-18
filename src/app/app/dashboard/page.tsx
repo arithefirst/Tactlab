@@ -58,7 +58,7 @@ export default async function Dashboard() {
         </div>
         <div className="flex h-full flex-col lg:col-span-3">
           <Tabs defaultValue="upload" className="flex h-full flex-col">
-            <TabsList className="shadow-shadow grid w-full grid-cols-2 gap-1 px-1 sm:gap-2 sm:px-2">
+            <TabsList className="shadow-shadow grid w-full grid-cols-2 gap-1 px-2">
               <TabsTrigger value="upload" className={tabClass}>
                 Upload Video
               </TabsTrigger>
@@ -67,7 +67,7 @@ export default async function Dashboard() {
               </TabsTrigger>
             </TabsList>
             <TabsContent value="upload" className="flex-1">
-              <VideoUploadCard className="max-h-1/2 md:max-h-none" />
+              <VideoUploadCard className="" />
             </TabsContent>
             <TabsContent value="progress" className="flex-1">
               <ScoreGraph scores={scores} className="h-full" />
