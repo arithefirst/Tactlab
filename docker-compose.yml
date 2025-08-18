@@ -5,9 +5,9 @@ services:
     image: ghcr.io/arithefirst/tactlab
     environment:
       - NODE_ENV=production
-      - S3_ENDPOINT=127.0.0.1
 
       # Change These
+      - S3_ENDPOINT=127.0.0.1
       - S3_ACCESSKEY=minioadmin
       - S3_SECRETKEY=minioadmin
       - S3_PORT=9000
