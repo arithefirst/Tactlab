@@ -108,7 +108,7 @@ export function VideoProgressBar({
           style={{ width: `${Math.max(0, Math.min(100, progressPercent))}%` }}
         />
         <div
-          className="bg-main absolute top-1/2 z-10 h-4 w-4 -translate-y-1/2 transform cursor-grab rounded-full hover:scale-110 active:cursor-grabbing"
+          className="bg-main absolute top-1/2 z-10 h-4 w-4 -translate-y-1/2 transform cursor-grab rounded-full hover:scale-110 hover:shadow active:cursor-grabbing"
           style={{ left: `${Math.max(0, Math.min(100, progressPercent))}%`, marginLeft: '-8px' }}
           onMouseDown={handleMouseDown}
         />
