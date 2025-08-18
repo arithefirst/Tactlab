@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Tactlab
 
-## Getting Started
+Tactlab is a tool to analyze your performance in CS2 using Twelvelabs Pegasus (Twelvelabs interview techincal assignment)
 
-First, run the development server:
+## 🚀 Quick Start
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Docker Setup (Recommended)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. **Obtain required credentials:**
+   - Get your **Twelvelabs Index ID and API Key** (see [Twelvelabs](https://docs.twelvelabs.io/v1.3/docs/advanced/organizations/users-guide#create-api-keys))
+   - Get your **Clerk credentials** (see [Clerk](https://clerk.com/glossary/api-key))
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+2. **Run the setup script:**
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   ```bash
+   curl https://raw.githubusercontent.com/arithefirst/Tactlab/refs/heads/main/setup.sh -o setup.sh && sh setup.sh
+   ```
 
-## Learn More
+   The script will download the latest docker-compose.yml and prompt you for required environment variables (Minio, Clerk, Twelvelabs, and PostgreSQL credentials).
 
-To learn more about Next.js, take a look at the following resources:
+3. **Start the stack:**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   ```bash
+   docker-compose up -d
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   This will launch all services in the background.
 
-## Deploy on Vercel
+4. **Access the app:**  
+   Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Manual (Non-Docker) Setup
+
+1. **Obtain required credentials:**
+   - Get your **Twelvelabs Index ID and API Key** (see [Twelvelabs](https://docs.twelvelabs.io/v1.3/docs/advanced/organizations/users-guide#create-api-keys))
+   - Get your **Clerk credentials** (see [Clerk](https://clerk.com/glossary/api-key))
+
+2. **Install dependencies:**  
+   Make sure you have [Bun](https://bun.sh/) installed.  
+   Run:
+
+   ```bash
+   bun install
+   ```
+
+3. **Configure environment variables:**  
+   Copy .env.example to .env and fill in all required values (S3, Clerk, Twelvelabs, PostgreSQL).
+
+4. **Build the app:**
+
+   ```bash
+   bun run build
+   ```
+
+5. **Start the app:**
+
+   ```bash
+   bun run start
+   ```
+
+   The app will be available at [http://localhost:3000](http://localhost:3000).
+
+## 📄 License
+
+See [LICENSE](/LICENSE) for details.
