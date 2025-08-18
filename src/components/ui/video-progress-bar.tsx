@@ -2,13 +2,14 @@
 
 import { useEffect, useRef } from 'react';
 
-interface ProgressBarProps {
+interface VideoProgressBarProps {
   currentTime: number;
   duration: number;
   isDragging: boolean;
   onSeek: (time: number) => void;
   onDragStart: () => void;
   onDragEnd: () => void;
+  markers?: number[];
 }
 
 export function VideoProgressBar({
@@ -18,7 +19,8 @@ export function VideoProgressBar({
   onSeek,
   onDragStart,
   onDragEnd,
-}: ProgressBarProps) {
+  markers = [],
+}: VideoProgressBarProps) {
   const progressRef = useRef<HTMLDivElement>(null);
 
   // handle mouse events for dragging
@@ -71,7 +73,6 @@ export function VideoProgressBar({
   function handleMouseDown(event: React.MouseEvent) {
     event.preventDefault();
 
-    // Immediately seek to the click position when starting drag
     const progressBar = progressRef.current;
     if (progressBar && duration) {
       const rect = progressBar.getBoundingClientRect();
@@ -95,21 +96,29 @@ export function VideoProgressBar({
   const progressPercent = duration > 0 && isFinite(currentTime) ? (currentTime / duration) * 100 : 0;
 
   return (
-    <div
-      ref={progressRef}
-      className="relative h-2 cursor-pointer rounded-full bg-gray-200 transition-all hover:bg-gray-300"
-      onClick={handleProgressClick}
-      onMouseDown={handleProgressMouseDown}
-    >
+    <div className="relative h-4 w-full">
       <div
-        className="bg-main pointer-events-none absolute top-0 left-0 h-full rounded-full"
-        style={{ width: `${Math.max(0, Math.min(100, progressPercent))}%` }}
-      />
-      <div
-        className="bg-main absolute top-1/2 h-4 w-4 -translate-y-1/2 transform cursor-grab rounded-full hover:scale-110 active:cursor-grabbing"
-        style={{ left: `${Math.max(0, Math.min(100, progressPercent))}%`, marginLeft: '-8px' }}
-        onMouseDown={handleMouseDown}
-      />
+        ref={progressRef}
+        className="relative h-2 cursor-pointer rounded-full bg-gray-200 transition-all hover:bg-gray-300"
+        onClick={handleProgressClick}
+        onMouseDown={handleProgressMouseDown}
+      >
+        <div
+          className="bg-main pointer-events-none absolute top-0 left-0 h-full rounded-full"
+          style={{ width: `${Math.max(0, Math.min(100, progressPercent))}%` }}
+        />
+        <div
+          className="bg-main absolute top-1/2 z-10 h-4 w-4 -translate-y-1/2 transform cursor-grab rounded-full hover:scale-110 active:cursor-grabbing"
+          style={{ left: `${Math.max(0, Math.min(100, progressPercent))}%`, marginLeft: '-8px' }}
+          onMouseDown={handleMouseDown}
+        />
+      </div>
+      {markers.map((marker, idx) => {
+        const left = duration ? `${(marker / duration) * 100}%` : '0%';
+        return (
+          <div key={idx} className="pointer-events-none absolute top-0 h-2 w-0.5 bg-blue-500" style={{ left }} />
+        );
+      })}
     </div>
   );
 }

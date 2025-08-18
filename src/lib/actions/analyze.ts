@@ -53,10 +53,12 @@ ${jsonStructure}
 export interface AnalysisResult {
   mechanics: {
     start: number;
+    end: number;
     summary: string;
   }[];
   strategy: {
     start: number;
+    end: number;
     summary: string;
   }[];
 }

@@ -2,14 +2,14 @@
 
 import { AnalysisResult, startAnalysis } from '@/lib/actions/analyze';
 import { CornerUpLeft, Loader2 } from 'lucide-react';
+import Link from 'next/link';
 import { useRef, useState, useTransition } from 'react';
+import ChatUi from './chat';
 import { AnalysisContent } from './displayAnalysis';
 import { Button, buttonVariants } from './ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from './ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { VideoPlayer, VideoPlayerRef } from './videoPlayer';
-import Link from 'next/link';
-import ChatUi from './chat';
 
 interface VideoPlayerProps {
   video: {
@@ -21,6 +21,15 @@ interface VideoPlayerProps {
     thumbnail: string | null;
     analysis: AnalysisResult | null;
   };
+}
+
+function getMarkersFromAnalysis(analysis: AnalysisResult | null): number[] | undefined {
+  if (analysis === null) return undefined;
+
+  const mechMarkers = analysis.mechanics.map((v) => v.start);
+  const stratMarkers = analysis.strategy.map((v) => v.start);
+
+  return [...mechMarkers, ...stratMarkers];
 }
 
 export function VideoView({ video }: VideoPlayerProps) {
@@ -78,7 +87,11 @@ export function VideoView({ video }: VideoPlayerProps) {
 
       <div className="flex h-full min-h-0 w-full flex-col gap-3 px-2 md:px-0 lg:flex-row">
         <div className="flex w-full items-center justify-center lg:w-3/5">
-          <VideoPlayer ref={playerRef} videoSrc={`/api/file/${video.objectId}`} />
+          <VideoPlayer
+            ref={playerRef}
+            videoSrc={`/api/file/${video.objectId}`}
+            markers={getMarkersFromAnalysis(video.analysis)}
+          />
         </div>
 
         <div className="mb-2 h-full w-full flex-grow sm:min-h-[400px] lg:w-2/5">
