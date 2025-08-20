@@ -37,6 +37,7 @@ export async function uploadToTwelvelabs(objId: string): Promise<TasksCreateResp
 
     return res;
   } catch (e) {
+    await db.delete(videosTable).where(eq(videosTable.objectId, objId));
     throw e;
   } finally {
     // Clean up the temporary file
