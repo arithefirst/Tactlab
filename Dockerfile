@@ -38,6 +38,7 @@ RUN chmod 755 .
 COPY docker-entrypoint.sh .
 RUN chmod +x docker-entrypoint.sh
 ENTRYPOINT ["./docker-entrypoint.sh"]
+LABEL org.opencontainers.image.source https://github.com/arithefirst/tactlab
 
 EXPOSE 3000
 ENV PORT 3000
