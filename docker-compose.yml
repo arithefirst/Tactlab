@@ -2,7 +2,7 @@ services:
   # Main service
   tactlab:
     container_name: tactlab-main
-    image: ghcr.io/arithefirst/tactlab
+    image: ghcr.io/arithefirst/tactlab:latest
     environment:
       - NODE_ENV=production
 
