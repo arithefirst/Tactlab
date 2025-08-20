@@ -7,6 +7,7 @@ import { and, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { tlClient } from './clients';
 import { scoresTable } from '@/db/schema/score';
+import { revalidatePath } from 'next/cache';
 
 const jsonStructure = `
 Return the output strictly as JSON in the following format:
@@ -179,6 +180,7 @@ export async function startAnalysis(objectId: string): Promise<AnalysisResult> {
 
     // save the result to the db for future access
     await db.update(videosTable).set({ analysis: result }).where(eq(videosTable.objectId, objectId));
+    revalidatePath(`/app/video/${objectId}`);
 
     return result;
   } catch (e) {
