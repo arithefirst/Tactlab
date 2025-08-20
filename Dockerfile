@@ -12,6 +12,8 @@ RUN bun install --omit-dev
 FROM deps AS build
 COPY . .
 
+# Replace the clerk publishable key with a static one at build time so we can replace it
+ARG NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_live_Y2xlcmsudGFjdGxhYi5hcml0aGVmaXJzdC5jb20k
 RUN bun next telemetry disable
 RUN bun run build
 
