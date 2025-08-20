@@ -35,6 +35,11 @@ echo -en "${YELLOW}S3 Port:${NC} "
 read S3_PORT
 echo -en "${YELLOW}S3 Endpoint:${NC} "
 read S3_ENDPOINT
+echo -en "${YELLOW}S3 Use SSL (true/false) [default: false]:${NC} "
+read S3_USE_SSL
+if [ -z "$S3_USE_SSL" ]; then
+  S3_USE_SSL="false"
+fi
 echo -en "${YELLOW}Clerk Publishable Key:${NC} "
 read CLERK_PUB
 echo -en "${YELLOW}Clerk Secret Key:${NC} "
@@ -57,6 +62,7 @@ sed -i "s/S3_ACCESSKEY=minioadmin/S3_ACCESSKEY=${MINIO_USER}/g" "$DOCKER_COMPOSE
 sed -i "s/S3_SECRETKEY=minioadmin/S3_SECRETKEY=${MINIO_PASS}/g" "$DOCKER_COMPOSE_FILE"
 sed -i "s/S3_PORT=9000/S3_PORT=${S3_PORT}/g" "$DOCKER_COMPOSE_FILE"
 sed -i "s/S3_ENDPOINT=127.0.0.1/S3_ENDPOINT=${S3_ENDPOINT}/g" "$DOCKER_COMPOSE_FILE"
+sed -i "s/S3_USE_SSL=false/S3_USE_SSL=${S3_USE_SSL}/g" "$DOCKER_COMPOSE_FILE"
 sed -i "s/NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key_here/NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${CLERK_PUB}/g" "$DOCKER_COMPOSE_FILE"
 sed -i "s/CLERK_SECRET_KEY=your_clerk_secret_key_here/CLERK_SECRET_KEY=${CLERK_SEC}/g" "$DOCKER_COMPOSE_FILE"
 sed -i "s/TL_API_KEY=your_tactlab_api_key_here/TL_API_KEY=${TL_API}/g" "$DOCKER_COMPOSE_FILE"

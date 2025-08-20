@@ -11,10 +11,14 @@ services:
       - S3_ACCESSKEY=minioadmin
       - S3_SECRETKEY=minioadmin
       - S3_PORT=9000
+      - S3_USE_SSL=false
+
       - NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key_here
       - CLERK_SECRET_KEY=your_clerk_secret_key_here
+
       - TL_API_KEY=your_tactlab_api_key_here
       - TL_INDEX_ID=your_tactlab_index_id_here
+
       - DATABASE_URL=postgres://<user>:<password>@postgres:5432/tactlab
     ports:
       - 3000:3000

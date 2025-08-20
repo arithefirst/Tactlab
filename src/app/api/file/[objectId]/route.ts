@@ -6,7 +6,7 @@ import { Readable } from 'stream';
 const minioClient = new Minio.Client({
   endPoint: process.env.S3_ENDPOINT!,
   port: +process.env.S3_PORT!,
-  useSSL: false,
+  useSSL: process.env.S3_USE_SSL === 'true',
   accessKey: process.env.S3_ACCESSKEY,
   secretKey: process.env.S3_SECRETKEY,
 });
