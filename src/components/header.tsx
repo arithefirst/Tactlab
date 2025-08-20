@@ -72,7 +72,6 @@ export default function Header() {
                   Create your Account
                 </Button>
               </SignUpButton>
-              isMenuOpen
             </SignedOut>
             <SignedIn>
               <Link
